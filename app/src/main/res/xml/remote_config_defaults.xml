@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!-- START xml_defaults -->
+<defaultsMap>
+    <entry>
+        <key>default_source</key>
+        <value>cnn</value>
+    </entry>
+</defaultsMap>

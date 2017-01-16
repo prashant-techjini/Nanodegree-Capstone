@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "487262700939",
+    "firebase_url": "https://top-news-6aa13.firebaseio.com",
+    "project_id": "top-news-6aa13",
+    "storage_bucket": "top-news-6aa13.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:487262700939:android:5e9b673a831d2094",
+        "android_client_info": {
+          "package_name": "com.nanodegree.topnews"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "487262700939-ks5b02tugeev78mj46h2vqavdlhumoap.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1kigMFoAWnE7DjL6Wd_kXHntTcFY6crE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

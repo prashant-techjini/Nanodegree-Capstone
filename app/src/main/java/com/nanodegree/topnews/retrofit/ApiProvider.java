@@ -3,7 +3,6 @@ package com.nanodegree.topnews.retrofit;
 import android.content.Context;
 
 import com.nanodegree.topnews.BuildConfig;
-import com.nanodegree.topnews.Constants;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -29,7 +28,7 @@ public class ApiProvider {
         builder.interceptors().add(httpLoggingInterceptor);
         OkHttpClient client = builder.build();
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL + "/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BuildConfig.BASE_URL + "/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxErrorHandlingCallAdapterFactory.create())
                 .client(client)
