@@ -16,7 +16,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".newsdetail.NewsDetailActivity" />
-        <activity android:name=".drawermenu.DrawerActivity"></activity>
+        <activity android:name=".drawermenu.DrawerActivity" />
+        <activity android:name=".newssource.NewsSourceActivity"></activity>
     </application>
 
 </manifest>

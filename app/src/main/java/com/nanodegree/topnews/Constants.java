@@ -5,5 +5,6 @@ package com.nanodegree.topnews;
  */
 
 public class Constants {
-    public static final String BASE_URL = "";
+    public static final String NEWS_SOURCE = "news_source";
+    public static final String NEWS_DETAIL = "news_detail";
 }

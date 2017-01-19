@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.webkit.WebViewClient;
 
 import com.google.gson.Gson;
+import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.databinding.FragmentNewsDetailBinding;
 import com.nanodegree.topnews.model.Article;
@@ -74,7 +75,7 @@ public class NewsDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_news_detail, container, false);
 
-        String jsonString = getActivity().getIntent().getStringExtra("NEWS_DETAIL");
+        String jsonString = getActivity().getIntent().getStringExtra(Constants.NEWS_DETAIL);
         Gson gson = new Gson();
         Article article = gson.fromJson(jsonString, Article.class);
 

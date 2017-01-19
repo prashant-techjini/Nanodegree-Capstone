@@ -1,4 +1,4 @@
-package com.nanodegree.topnews.newslist;
+package com.nanodegree.topnews.newssource;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -11,12 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.nanodegree.topnews.R;
-import com.nanodegree.topnews.databinding.FragmentNewsListBinding;
-import com.nanodegree.topnews.interactor.GetNewsListUseCase;
-import com.nanodegree.topnews.model.Article;
-import com.nanodegree.topnews.model.ArticlesCollection;
+import com.nanodegree.topnews.databinding.FragmentNewsSourceBinding;
+import com.nanodegree.topnews.interactor.GetNewsSourceUseCase;
+import com.nanodegree.topnews.model.NewsSource;
+import com.nanodegree.topnews.model.NewsSourcesCollection;
 
 import java.util.List;
 
@@ -25,12 +24,12 @@ import rx.Subscriber;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link NewsListFragment.OnFragmentInteractionListener} interface
+ * {@link NewsSourceFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link NewsListFragment#newInstance} factory method to
+ * Use the {@link NewsSourceFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsListFragment extends Fragment {
+public class NewsSourceFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -40,15 +39,15 @@ public class NewsListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private FragmentNewsListBinding binding;
+    private FragmentNewsSourceBinding binding;
     private OnFragmentInteractionListener mListener;
     private Context context;
     private LinearLayoutManager layoutManager;
-    private NewsListAdapter adapter;
-    private List<Article> listArticles;
-    private GetNewsListUseCase getNewsListUseCase;
+    private NewsSourceAdapter adapter;
+    private List<NewsSource> listNewsSource;
+    private GetNewsSourceUseCase getNewsSourceUseCase;
 
-    public NewsListFragment() {
+    public NewsSourceFragment() {
         // Required empty public constructor
     }
 
@@ -61,8 +60,8 @@ public class NewsListFragment extends Fragment {
      * @return A new instance of fragment NewsListFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static NewsListFragment newInstance(String param1, String param2) {
-        NewsListFragment fragment = new NewsListFragment();
+    public static NewsSourceFragment newInstance(String param1, String param2) {
+        NewsSourceFragment fragment = new NewsSourceFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -84,28 +83,22 @@ public class NewsListFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_news_list, container, false);
+                R.layout.fragment_news_source, container, false);
 
         layoutManager = new LinearLayoutManager(context);
-        adapter = new NewsListAdapter((NewsListActivity) context, context, listArticles);
+        adapter = new NewsSourceAdapter((NewsSourceActivity) context, context, listNewsSource);
 
-        binding.recyclerNewsList.setLayoutManager(layoutManager);
-        binding.recyclerNewsList.setAdapter(adapter);
+        binding.recyclerSourceList.setLayoutManager(layoutManager);
+        binding.recyclerSourceList.setAdapter(adapter);
 
-        String newsSourceId = FirebaseRemoteConfig.getInstance().getString("default_source_id");
-        getNewsListUseCase = new GetNewsListUseCase(context);
-        doApiCallGetNewsList(newsSourceId);
+        getNewsSourceUseCase = new GetNewsSourceUseCase(context);
+        doApiCallGetNewsList();
 
         return binding.getRoot();
     }
 
-    private void doApiCallGetNewsList(String newsSourceId) {
-        getNewsListUseCase.getNewsList(new GetNewsListSubscriber(), newsSourceId);
-    }
-
-    public void updateNewsSource(String newsSourceId) {
-        getNewsListUseCase = new GetNewsListUseCase(context);
-        doApiCallGetNewsList(newsSourceId);
+    private void doApiCallGetNewsList() {
+        getNewsSourceUseCase.getSources(new GetNewsSourceSubscriber());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -133,12 +126,12 @@ public class NewsListFragment extends Fragment {
         mListener = null;
     }
 
-    public NewsListAdapter getAdapter() {
+    public NewsSourceAdapter getAdapter() {
         return adapter;
     }
 
     public RecyclerView getRecyclerView() {
-        return binding.recyclerNewsList;
+        return binding.recyclerSourceList;
     }
 
     /**
@@ -156,7 +149,7 @@ public class NewsListFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public class GetNewsListSubscriber extends Subscriber<ArticlesCollection> {
+    public class GetNewsSourceSubscriber extends Subscriber<NewsSourcesCollection> {
 
         @Override
         public void onCompleted() {
@@ -169,8 +162,8 @@ public class NewsListFragment extends Fragment {
         }
 
         @Override
-        public void onNext(ArticlesCollection articlesCollection) {
-            adapter.setData(articlesCollection.getArticles());
+        public void onNext(NewsSourcesCollection newsSourcesCollection) {
+            adapter.setData(newsSourcesCollection.getSources());
         }
     }
 }

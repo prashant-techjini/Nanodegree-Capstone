@@ -2,7 +2,6 @@ package com.nanodegree.topnews.interactor;
 
 import android.content.Context;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.model.ArticlesCollection;
 
@@ -14,6 +13,8 @@ import rx.Subscriber;
  */
 
 public class GetNewsListUseCase extends UseCase<ArticlesCollection> {
+    private String sourceId;
+
     public GetNewsListUseCase(Context context) {
         super(context);
         this.context = context;
@@ -21,11 +22,11 @@ public class GetNewsListUseCase extends UseCase<ArticlesCollection> {
 
     @Override
     public Observable<ArticlesCollection> buildObservable() {
-        String newsSource = FirebaseRemoteConfig.getInstance().getString("default_source");
-        return api.getArticles(newsSource, context.getString(R.string.newsapi_api_key));
+        return api.getArticles(sourceId, context.getString(R.string.newsapi_api_key));
     }
 
-    public void getNewsList(Subscriber useCaseSubscriber) {
+    public void getNewsList(Subscriber useCaseSubscriber, String sourceId) {
+        this.sourceId = sourceId;
         execute(useCaseSubscriber);
     }
 }
