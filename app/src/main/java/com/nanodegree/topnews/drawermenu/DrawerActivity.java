@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.view.Gravity;
 import android.view.MenuItem;
 
 import com.nanodegree.topnews.BaseActivity;
@@ -11,6 +12,7 @@ import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.databinding.ActivityDrawerBinding;
 import com.nanodegree.topnews.newslist.BookmarksListActivity;
 import com.nanodegree.topnews.newslist.NewsListActivity;
+import com.nanodegree.topnews.settings.SettingsActivity;
 
 public class DrawerActivity extends BaseActivity {
     protected ActivityDrawerBinding drawerBinding;
@@ -41,10 +43,10 @@ public class DrawerActivity extends BaseActivity {
                         break;
 
                     case R.id.nav_item_settings:
-//                        if (!(DrawerActivity.this instanceof SettingsActivity)) {
-//                            intent = new Intent(DrawerActivity.this, SettingsActivity.class);
-//                            startActivity(intent);
-//                        }
+                        if (!(DrawerActivity.this instanceof SettingsActivity)) {
+                            intent = new Intent(DrawerActivity.this, SettingsActivity.class);
+                            startActivity(intent);
+                        }
                         break;
 
                     default:
@@ -60,12 +62,28 @@ public class DrawerActivity extends BaseActivity {
         super.onResume();
         if (DrawerActivity.this instanceof NewsListActivity) {
             drawerBinding.navView.getMenu().getItem(0).setChecked(true);
-        }
-        else if (DrawerActivity.this instanceof BookmarksListActivity) {
+        } else if (DrawerActivity.this instanceof BookmarksListActivity) {
             drawerBinding.navView.getMenu().getItem(1).setChecked(true);
+        } else if (DrawerActivity.this instanceof SettingsActivity) {
+            drawerBinding.navView.getMenu().getItem(2).setChecked(true);
         }
-//        else if (DrawerActivity.this instanceof SettingsActivity) {
-//            drawerBinding.navView.getMenu().getItem(2).setChecked(true);
-//        }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
+                } else {
+                    drawerBinding.drawerLayout.openDrawer(Gravity.LEFT);
+                }
+                break;
+
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

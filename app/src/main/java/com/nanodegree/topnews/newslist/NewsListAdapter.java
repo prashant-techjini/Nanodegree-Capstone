@@ -1,6 +1,5 @@
 package com.nanodegree.topnews.newslist;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -20,7 +19,7 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private NewsListActivity activity;
+    private NewsItemSelectionListener listener;
     private Context context;
     private List<Article> articleList;
     public int selectedIndex = 0;
@@ -29,13 +28,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             BookmarksHelper.BOOKMARK_COLUMN_URL, BookmarksHelper.BOOKMARK_COLUMN_IMAGE_URL};
 
     interface NewsItemSelectionListener {
-        void onArticleSelected();
+        void onArticleSelected(int position);
     }
 
-    public NewsListAdapter(Activity activity, Context context, List<Article> articleList) {
-        if (activity instanceof NewsListActivity) {
-            this.activity = (NewsListActivity) activity;
-        }
+    public NewsListAdapter(NewsItemSelectionListener listener, Context context, List<Article> articleList) {
+        this.listener = listener;
         this.context = context;
         this.articleList = articleList;
     }
@@ -87,7 +84,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             switch (v.getId()) {
                 case R.id.rl_news_list_item:
                     int position = getLayoutPosition();
-                    activity.onArticleSelected(position);
+                    listener.onArticleSelected(position);
                     selectedIndex = position;
                     break;
 

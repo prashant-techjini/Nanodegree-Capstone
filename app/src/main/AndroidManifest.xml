@@ -23,12 +23,16 @@
         <activity
             android:name=".newslist.BookmarksListActivity"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".settings.SettingsActivity"
+            android:launchMode="singleTask" />
 
         <provider
             android:name=".data.BookmarksProvider"
             android:authorities="com.nanodegree.topnews.BookmarksProvider"
             android:enabled="true"
-            android:exported="true"></provider>
+            android:exported="true" />
+
     </application>
 
 </manifest>

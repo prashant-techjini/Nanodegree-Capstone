@@ -89,7 +89,7 @@ public class NewsListFragment extends Fragment {
                 R.layout.fragment_news_list, container, false);
 
         layoutManager = new LinearLayoutManager(context);
-        adapter = new NewsListAdapter((Activity) context, context, listArticles);
+        adapter = new NewsListAdapter((NewsListAdapter.NewsItemSelectionListener) activity, context, listArticles);
 
         binding.recyclerNewsList.setLayoutManager(layoutManager);
         binding.recyclerNewsList.setAdapter(adapter);

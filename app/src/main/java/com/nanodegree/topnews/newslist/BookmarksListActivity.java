@@ -1,10 +1,13 @@
 package com.nanodegree.topnews.newslist;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
@@ -14,18 +17,22 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.google.gson.Gson;
+import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.data.BookmarksHelper;
 import com.nanodegree.topnews.data.BookmarksProvider;
 import com.nanodegree.topnews.databinding.ActivityBookmarksListBinding;
 import com.nanodegree.topnews.drawermenu.DrawerActivity;
 import com.nanodegree.topnews.model.Article;
+import com.nanodegree.topnews.newsdetail.NewsDetailActivity;
 import com.nanodegree.topnews.newsdetail.NewsDetailFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookmarksListActivity extends DrawerActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class BookmarksListActivity extends DrawerActivity implements
+        NewsListAdapter.NewsItemSelectionListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String[] PROJECTION = {BookmarksHelper.BOOKMARK_COLUMN_ID,
             BookmarksHelper.BOOKMARK_COLUMN_TITLE, BookmarksHelper.BOOKMARK_COLUMN_PUBLISHED_AT,
@@ -50,7 +57,7 @@ public class BookmarksListActivity extends DrawerActivity implements LoaderManag
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setDisplayShowHomeEnabled(true);
-                actionBar.setTitle(R.string.app_name);
+                actionBar.setTitle(R.string.bookmarks);
             }
         }
 
@@ -69,22 +76,22 @@ public class BookmarksListActivity extends DrawerActivity implements LoaderManag
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
-                } else {
-                    drawerBinding.drawerLayout.openDrawer(Gravity.LEFT);
-                }
-                break;
-
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+//                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
+//                } else {
+//                    drawerBinding.drawerLayout.openDrawer(Gravity.LEFT);
+//                }
+//                break;
+//
+//            default:
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -115,5 +122,47 @@ public class BookmarksListActivity extends DrawerActivity implements LoaderManag
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void onArticleSelected(int position) {
+
+        if (isTablet) {
+            NewsListAdapter adapter = newsListFragment.getAdapter();
+            NewsListAdapter.ArticleViewHolder viewHolderLastSelected =
+                    (NewsListAdapter.ArticleViewHolder) newsListFragment
+                            .getRecyclerView().findViewHolderForLayoutPosition(adapter.selectedIndex);
+
+            if (viewHolderLastSelected != null) {
+                viewHolderLastSelected.binding.rlNewsListItem.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            NewsListAdapter.ArticleViewHolder viewHolderSelected =
+                    (NewsListAdapter.ArticleViewHolder) newsListFragment
+                            .getRecyclerView().findViewHolderForLayoutPosition(adapter.selectedIndex);
+
+            if (viewHolderSelected != null) {
+                viewHolderSelected.binding.rlNewsListItem.setBackgroundColor(ContextCompat.getColor(this,
+                        R.color.selected_item_bg));
+            }
+
+            adapter.selectedIndex = position;
+
+            NewsDetailFragment movieDetailFragment = new NewsDetailFragment();
+
+            Gson gson = new Gson();
+            String jsonString = gson.toJson(newsListFragment.getAdapter().getArticleList().get(position));
+            getIntent().putExtra(Constants.NEWS_DETAIL, jsonString);
+
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fl_container_news_detail, movieDetailFragment);
+            fragmentTransaction.commitAllowingStateLoss();
+        } else {
+            Intent intent = new Intent(this, NewsDetailActivity.class);
+            Gson gson = new Gson();
+            String jsonString = gson.toJson(newsListFragment.getAdapter().getArticleList().get(position));
+            intent.putExtra(Constants.NEWS_DETAIL, jsonString);
+            startActivity(intent);
+        }
     }
 }

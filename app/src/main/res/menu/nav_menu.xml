@@ -13,6 +13,7 @@
         android:title="@string/bookmarks" />
     <item
         android:id="@+id/nav_item_settings"
+        android:checkable="true"
         android:icon="@drawable/ic_settings"
         android:title="@string/settings" />
 </menu>

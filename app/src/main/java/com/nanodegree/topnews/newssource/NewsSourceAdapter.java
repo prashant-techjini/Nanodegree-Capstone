@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.google.gson.Gson;
 import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
+import com.nanodegree.topnews.data.Preferences;
 import com.nanodegree.topnews.databinding.ListItemNewsSourceBinding;
 import com.nanodegree.topnews.model.NewsSource;
 import com.squareup.picasso.Picasso;
@@ -35,7 +36,8 @@ public class NewsSourceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ListItemNewsSourceBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.list_item_news_source, parent, false);
+        ListItemNewsSourceBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context),
+                R.layout.list_item_news_source, parent, false);
         RecyclerView.ViewHolder viewHolder = new NewsSourceViewHolder(binding);
         return viewHolder;
     }
@@ -77,9 +79,15 @@ public class NewsSourceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     int position = getLayoutPosition();
                     //activity.onArticleSelected(position);
                     selectedIndex = position;
+                    NewsSource newsSource = newsSourceList.get(position);
+
+                    Preferences.putString(context, Constants.NEWS_SOURCE_ID, newsSource.getId());
+                    Preferences.putString(context, Constants.NEWS_SOURCE_NAME, newsSource.getName());
+                    Preferences.putString(context, Constants.NEWS_SOURCE_LOGO_URL,
+                            newsSource.getUrlsToLogos().getSmall());
 
                     Gson gson = new Gson();
-                    String jsonString = gson.toJson(newsSourceList.get(position));
+                    String jsonString = gson.toJson(newsSource);
 
                     Intent intent = new Intent();
                     intent.putExtra(Constants.NEWS_SOURCE, jsonString);

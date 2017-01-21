@@ -22,6 +22,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
+import com.nanodegree.topnews.data.Preferences;
 import com.nanodegree.topnews.databinding.ActivityNewsListBinding;
 import com.nanodegree.topnews.drawermenu.DrawerActivity;
 import com.nanodegree.topnews.model.NewsSource;
@@ -30,7 +31,8 @@ import com.nanodegree.topnews.newsdetail.NewsDetailFragment;
 import com.nanodegree.topnews.newssource.NewsSourceActivity;
 import com.squareup.picasso.Picasso;
 
-public class NewsListActivity extends DrawerActivity implements View.OnClickListener {
+public class NewsListActivity extends DrawerActivity implements View.OnClickListener,
+        NewsListAdapter.NewsItemSelectionListener {
 
     private ActivityNewsListBinding binding;
     private NewsListFragment newsListFragment;
@@ -60,8 +62,14 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
             }
         }
 
-        String newsSourceName = FirebaseRemoteConfig.getInstance().getString("default_source_name");
-        String newsSourceLogoUrl = FirebaseRemoteConfig.getInstance().getString("default_source_logo_url");
+        String newsSourceId = Preferences.getString(this, Constants.NEWS_SOURCE_ID);
+        String newsSourceName = Preferences.getString(this, Constants.NEWS_SOURCE_NAME);
+        String newsSourceLogoUrl = Preferences.getString(this, Constants.NEWS_SOURCE_LOGO_URL);
+
+        if ("".equals(newsSourceName)) {
+            newsSourceName = FirebaseRemoteConfig.getInstance().getString("default_source_name");
+            newsSourceLogoUrl = FirebaseRemoteConfig.getInstance().getString("default_source_logo_url");
+        }
 
         binding.toolbar.tvSourceName.setText(newsSourceName);
         if (!TextUtils.isEmpty(newsSourceLogoUrl)) {
@@ -82,22 +90,6 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
-                } else {
-                    drawerBinding.drawerLayout.openDrawer(Gravity.LEFT);
-                }
-                break;
-
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public void onArticleSelected(int position) {
 
         if (isTablet) {
