@@ -107,7 +107,7 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
                             .getRecyclerView().findViewHolderForLayoutPosition(adapter.selectedIndex);
 
             if (viewHolderLastSelected != null) {
-                viewHolderLastSelected.baseLayout.setBackgroundColor(Color.TRANSPARENT);
+                viewHolderLastSelected.binding.rlNewsListItem.setBackgroundColor(Color.TRANSPARENT);
             }
 
             NewsListAdapter.ArticleViewHolder viewHolderSelected =
@@ -115,7 +115,7 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
                             .getRecyclerView().findViewHolderForLayoutPosition(adapter.selectedIndex);
 
             if (viewHolderSelected != null) {
-                viewHolderSelected.baseLayout.setBackgroundColor(ContextCompat.getColor(this,
+                viewHolderSelected.binding.rlNewsListItem.setBackgroundColor(ContextCompat.getColor(this,
                         R.color.selected_item_bg));
             }
 

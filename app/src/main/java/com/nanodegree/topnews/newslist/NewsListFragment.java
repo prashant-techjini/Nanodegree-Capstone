@@ -1,5 +1,6 @@
 package com.nanodegree.topnews.newslist;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -47,6 +48,7 @@ public class NewsListFragment extends Fragment {
     private NewsListAdapter adapter;
     private List<Article> listArticles;
     private GetNewsListUseCase getNewsListUseCase;
+    private Activity activity;
 
     public NewsListFragment() {
         // Required empty public constructor
@@ -87,16 +89,30 @@ public class NewsListFragment extends Fragment {
                 R.layout.fragment_news_list, container, false);
 
         layoutManager = new LinearLayoutManager(context);
-        adapter = new NewsListAdapter((NewsListActivity) context, context, listArticles);
+        adapter = new NewsListAdapter((Activity) context, context, listArticles);
 
         binding.recyclerNewsList.setLayoutManager(layoutManager);
         binding.recyclerNewsList.setAdapter(adapter);
 
-        String newsSourceId = FirebaseRemoteConfig.getInstance().getString("default_source_id");
-        getNewsListUseCase = new GetNewsListUseCase(context);
-        doApiCallGetNewsList(newsSourceId);
+        if (activity instanceof NewsListActivity) {
+            String newsSourceId = FirebaseRemoteConfig.getInstance().getString("default_source_id");
+            getNewsListUseCase = new GetNewsListUseCase(context);
+            doApiCallGetNewsList(newsSourceId);
+        } else {
+            //bookmarks
+            if (adapter != null) {
+                adapter.setData(listArticles);
+            }
+        }
 
         return binding.getRoot();
+    }
+
+    public void setData(List<Article> articles) {
+        listArticles = articles;
+        if (adapter != null) {
+            adapter.setData(articles);
+        }
     }
 
     private void doApiCallGetNewsList(String newsSourceId) {
@@ -119,6 +135,7 @@ public class NewsListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        this.activity = (Activity) context;
 //        if (context instanceof OnFragmentInteractionListener) {
 //            mListener = (OnFragmentInteractionListener) context;
 //        } else {
