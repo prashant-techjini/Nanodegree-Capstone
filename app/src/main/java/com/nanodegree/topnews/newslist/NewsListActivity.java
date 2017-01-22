@@ -38,6 +38,7 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
     private boolean isTablet = false;
     private FirebaseRemoteConfig remoteConfig;
     private NewsSource newsSource;
+//    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,9 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
         binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.activity_news_list,
                 drawerBinding.flContentMain, true);
         initRemoteConfig();
+
+        // Obtain the FirebaseAnalytics instance.
+//        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         binding.toolbar.setClickHandler(this);
 
@@ -61,19 +65,7 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
             }
         }
 
-        String newsSourceId = Preferences.getString(this, Constants.NEWS_SOURCE_ID);
-        String newsSourceName = Preferences.getString(this, Constants.NEWS_SOURCE_NAME);
-        String newsSourceLogoUrl = Preferences.getString(this, Constants.NEWS_SOURCE_LOGO_URL);
-
-        if ("".equals(newsSourceName)) {
-            newsSourceName = FirebaseRemoteConfig.getInstance().getString("default_source_name");
-            newsSourceLogoUrl = FirebaseRemoteConfig.getInstance().getString("default_source_logo_url");
-        }
-
-        binding.toolbar.tvSourceName.setText(newsSourceName);
-        if (!TextUtils.isEmpty(newsSourceLogoUrl)) {
-            Picasso.with(this).load(newsSourceLogoUrl).into(binding.toolbar.ivSourceLogo);
-        }
+        updateNewsSourceDisplay();
 
         newsListFragment = (NewsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_news_list);
         FrameLayout layoutNewsDetail = (FrameLayout) findViewById(R.id.fl_container_news_detail);
@@ -88,9 +80,26 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
         }
     }
 
+    private void updateNewsSourceDisplay() {
+        String newsSourceId = Preferences.getString(this, Constants.NEWS_SOURCE_ID);
+        String newsSourceName = Preferences.getString(this, Constants.NEWS_SOURCE_NAME);
+        String newsSourceLogoUrl = Preferences.getString(this, Constants.NEWS_SOURCE_LOGO_URL);
+
+        if ("".equals(newsSourceName)) {
+            newsSourceName = FirebaseRemoteConfig.getInstance().getString("default_source_name");
+            newsSourceLogoUrl = FirebaseRemoteConfig.getInstance().getString("default_source_logo_url");
+        }
+
+        binding.toolbar.tvSourceName.setText(newsSourceName);
+        if (!TextUtils.isEmpty(newsSourceLogoUrl)) {
+            Picasso.with(this).load(newsSourceLogoUrl).into(binding.toolbar.ivSourceLogo);
+        }
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+        updateNewsSourceDisplay();
         newsListFragment.refreshNewsList();
     }
 

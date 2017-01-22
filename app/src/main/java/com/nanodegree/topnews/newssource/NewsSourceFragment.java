@@ -104,6 +104,7 @@ public class NewsSourceFragment extends Fragment {
 
     private void doApiCallGetNewsList() {
         progressDialog.show();
+        progressDialog.setCancelable(false);
         getNewsSourceUseCase.getSources(new GetNewsSourceSubscriber());
     }
 

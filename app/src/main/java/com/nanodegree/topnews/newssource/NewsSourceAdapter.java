@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.gson.Gson;
 import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
@@ -85,6 +87,11 @@ public class NewsSourceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Preferences.putString(context, Constants.NEWS_SOURCE_NAME, newsSource.getName());
                     Preferences.putString(context, Constants.NEWS_SOURCE_LOGO_URL,
                             newsSource.getUrlsToLogos().getSmall());
+
+                    //Firebase Analytics event
+                    Bundle bundle = new Bundle();
+                    bundle.putString("News source name", newsSource.getName());
+                    FirebaseAnalytics.getInstance(context).logEvent("NEWS_SOURCE_SELECTED", bundle);
 
                     Gson gson = new Gson();
                     String jsonString = gson.toJson(newsSource);

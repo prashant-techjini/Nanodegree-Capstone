@@ -130,6 +130,7 @@ public class NewsListFragment extends Fragment {
 
     private void doApiCallGetNewsList(String newsSourceId) {
         progressDialog.show();
+        progressDialog.setCancelable(false);
         getNewsListUseCase.getNewsList(new GetNewsListSubscriber(), newsSourceId);
     }
 
