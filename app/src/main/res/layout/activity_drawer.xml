@@ -25,6 +25,7 @@
             android:layout_gravity="left"
             android:background="@color/white"
             app:headerLayout="@layout/nav_header"
+            app:itemTextColor="@color/textColorPrimary"
             app:menu="@menu/nav_menu">
 
         </android.support.design.widget.NavigationView>

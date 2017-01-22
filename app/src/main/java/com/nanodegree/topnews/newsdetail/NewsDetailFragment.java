@@ -1,13 +1,17 @@
 package com.nanodegree.topnews.newsdetail;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.google.gson.Gson;
@@ -15,7 +19,9 @@ import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.databinding.FragmentNewsDetailBinding;
 import com.nanodegree.topnews.model.Article;
+import com.nanodegree.topnews.util.TimeUtils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +44,12 @@ public class NewsDetailFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private Context context;
     private FragmentNewsDetailBinding binding;
+    private ProgressDialog progressDialog;
+    private ImageLoadingCallback imageLoadingCallback;
+
+    interface ImageLoadingCallback {
+        void onImageLoaded(Bitmap bitmap);
+    }
 
     public NewsDetailFragment() {
         // Required empty public constructor
@@ -68,6 +80,8 @@ public class NewsDetailFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Loading...");
     }
 
     @Override
@@ -80,13 +94,31 @@ public class NewsDetailFragment extends Fragment {
         Article article = gson.fromJson(jsonString, Article.class);
 
         binding.tvDetailTitle.setText(article.getTitle());
-        binding.tvDetailTime.setText(article.getPublishedAt());
-        binding.webDetailContent.setWebViewClient(new WebViewClient());
+        binding.tvDetailTime.setText(TimeUtils.getDisplayTextTime(article.getPublishedAt()));
+        binding.webDetailContent.setWebViewClient(new NewsDetailWebViewClient());
         binding.webDetailContent.getSettings().setJavaScriptEnabled(true);
         binding.webDetailContent.loadUrl(article.getUrl());
 
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                binding.ivDetailImage.setImageBitmap(bitmap);
+                imageLoadingCallback.onImageLoaded(bitmap);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        };
+
         if (article != null && article.getUrlToImage() != null) {
-            Picasso.with(context).load(article.getUrlToImage()).into(binding.ivDetailImage);
+            Picasso.with(context).load(article.getUrlToImage()).into(target);
         } else {
             binding.ivDetailImage.setImageResource(R.mipmap.ic_launcher);
         }
@@ -104,6 +136,7 @@ public class NewsDetailFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        imageLoadingCallback = (ImageLoadingCallback) context;
 //        if (context instanceof OnFragmentInteractionListener) {
 //            mListener = (OnFragmentInteractionListener) context;
 //        } else {
@@ -131,5 +164,19 @@ public class NewsDetailFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class NewsDetailWebViewClient extends WebViewClient {
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            progressDialog.show();
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            progressDialog.dismiss();
+            super.onPageFinished(view, url);
+        }
     }
 }

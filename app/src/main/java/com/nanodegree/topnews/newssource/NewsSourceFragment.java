@@ -1,9 +1,11 @@
 package com.nanodegree.topnews.newssource;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,6 +48,7 @@ public class NewsSourceFragment extends Fragment {
     private NewsSourceAdapter adapter;
     private List<NewsSource> listNewsSource;
     private GetNewsSourceUseCase getNewsSourceUseCase;
+    private ProgressDialog progressDialog;
 
     public NewsSourceFragment() {
         // Required empty public constructor
@@ -76,6 +79,8 @@ public class NewsSourceFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Loading...");
     }
 
     @Override
@@ -98,6 +103,7 @@ public class NewsSourceFragment extends Fragment {
     }
 
     private void doApiCallGetNewsList() {
+        progressDialog.show();
         getNewsSourceUseCase.getSources(new GetNewsSourceSubscriber());
     }
 
@@ -158,11 +164,22 @@ public class NewsSourceFragment extends Fragment {
 
         @Override
         public void onError(Throwable e) {
+            progressDialog.dismiss();
 
+            Snackbar snackbar =
+                    Snackbar.make(binding.flNewsSource, R.string.message_network_error, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.retry, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doApiCallGetNewsList();
+                }
+            });
+            snackbar.show();
         }
 
         @Override
         public void onNext(NewsSourcesCollection newsSourcesCollection) {
+            progressDialog.dismiss();
             adapter.setData(newsSourcesCollection.getSources());
         }
     }

@@ -6,6 +6,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.databinding.ActivityNewsSourceBinding;
@@ -27,8 +28,22 @@ public class NewsSourceActivity extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
                 actionBar.setDisplayShowHomeEnabled(true);
-                actionBar.setTitle(R.string.selecte_news_source);
+                actionBar.setTitle(R.string.select_news_source);
             }
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

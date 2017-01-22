@@ -1,19 +1,15 @@
 package com.nanodegree.topnews.newslist;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -90,6 +86,12 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
         } else {
             isTablet = false;
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        newsListFragment.refreshNewsList();
     }
 
     @Override

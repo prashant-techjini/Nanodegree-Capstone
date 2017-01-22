@@ -3,7 +3,9 @@
     <string name="home">Home</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="settings">Settings</string>
-    <string name="selecte_news_source">Select news source</string>
+    <string name="select_news_source">Select news source</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="message_network_error">An unexpected error processing your request. Please try again.</string>
+    <string name="retry">RETRY</string>
 </resources>

@@ -1,10 +1,12 @@
 package com.nanodegree.topnews.newslist;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +52,8 @@ public class NewsListFragment extends Fragment {
     private List<Article> listArticles;
     private GetNewsListUseCase getNewsListUseCase;
     private Activity activity;
+    private ProgressDialog progressDialog;
+    private String newsSourceId;
 
     public NewsListFragment() {
         // Required empty public constructor
@@ -80,6 +84,9 @@ public class NewsListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Loading...");
     }
 
     @Override
@@ -96,7 +103,7 @@ public class NewsListFragment extends Fragment {
         binding.recyclerNewsList.setAdapter(adapter);
 
         if (activity instanceof NewsListActivity) {
-            String newsSourceId = Preferences.getString(context, Constants.NEWS_SOURCE_ID);
+            newsSourceId = Preferences.getString(context, Constants.NEWS_SOURCE_ID);
             getNewsListUseCase = new GetNewsListUseCase(context);
             doApiCallGetNewsList(newsSourceId);
         } else {
@@ -116,7 +123,13 @@ public class NewsListFragment extends Fragment {
         }
     }
 
+    public void refreshNewsList() {
+        newsSourceId = Preferences.getString(context, Constants.NEWS_SOURCE_ID);
+        doApiCallGetNewsList(newsSourceId);
+    }
+
     private void doApiCallGetNewsList(String newsSourceId) {
+        progressDialog.show();
         getNewsListUseCase.getNewsList(new GetNewsListSubscriber(), newsSourceId);
     }
 
@@ -183,11 +196,22 @@ public class NewsListFragment extends Fragment {
 
         @Override
         public void onError(Throwable e) {
+            progressDialog.dismiss();
 
+            Snackbar snackbar =
+                    Snackbar.make(binding.flNewsList, R.string.message_network_error, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.retry, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doApiCallGetNewsList(newsSourceId);
+                }
+            });
+            snackbar.show();
         }
 
         @Override
         public void onNext(ArticlesCollection articlesCollection) {
+            progressDialog.dismiss();
             adapter.setData(articlesCollection.getArticles());
         }
     }

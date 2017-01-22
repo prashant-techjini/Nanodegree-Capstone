@@ -25,6 +25,9 @@ public class DrawerActivity extends BaseActivity {
         drawerBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
+                }
                 Intent intent;
 
                 switch (item.getItemId()) {
@@ -66,6 +69,10 @@ public class DrawerActivity extends BaseActivity {
             drawerBinding.navView.getMenu().getItem(1).setChecked(true);
         } else if (DrawerActivity.this instanceof SettingsActivity) {
             drawerBinding.navView.getMenu().getItem(2).setChecked(true);
+        }
+
+        if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
         }
     }
 
