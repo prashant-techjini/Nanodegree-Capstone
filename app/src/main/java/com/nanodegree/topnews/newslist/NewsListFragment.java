@@ -12,8 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
+import com.nanodegree.topnews.data.Preferences;
 import com.nanodegree.topnews.databinding.FragmentNewsListBinding;
 import com.nanodegree.topnews.interactor.GetNewsListUseCase;
 import com.nanodegree.topnews.model.Article;
@@ -95,7 +96,7 @@ public class NewsListFragment extends Fragment {
         binding.recyclerNewsList.setAdapter(adapter);
 
         if (activity instanceof NewsListActivity) {
-            String newsSourceId = FirebaseRemoteConfig.getInstance().getString("default_source_id");
+            String newsSourceId = Preferences.getString(context, Constants.NEWS_SOURCE_ID);
             getNewsListUseCase = new GetNewsListUseCase(context);
             doApiCallGetNewsList(newsSourceId);
         } else {

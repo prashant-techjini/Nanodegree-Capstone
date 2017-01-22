@@ -1,11 +1,13 @@
 package com.nanodegree.topnews.newslist;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -29,6 +31,7 @@ import com.nanodegree.topnews.model.NewsSource;
 import com.nanodegree.topnews.newsdetail.NewsDetailActivity;
 import com.nanodegree.topnews.newsdetail.NewsDetailFragment;
 import com.nanodegree.topnews.newssource.NewsSourceActivity;
+import com.nanodegree.topnews.widget.TopNewsWidget;
 import com.squareup.picasso.Picasso;
 
 public class NewsListActivity extends DrawerActivity implements View.OnClickListener,
@@ -191,6 +194,15 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
                     .into(binding.toolbar.ivSourceLogo);
         }
         newsListFragment.updateNewsSource(newsSource.getId());
+
+        Preferences.putString(this, Constants.NEWS_SOURCE_ID, newsSource.getId());
+        Preferences.putString(this, Constants.NEWS_SOURCE_NAME, newsSource.getName());
+        Preferences.putString(this, Constants.NEWS_SOURCE_LOGO_URL, newsSource.getUrlsToLogos().getSmall());
+
+        Intent intent = new Intent(this, TopNewsWidget.class);
+        intent.setAction(TopNewsWidget.ACTION_NEWS_WIDGET_UPDATE);
+        //LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        sendBroadcast(intent);
     }
 
 }
