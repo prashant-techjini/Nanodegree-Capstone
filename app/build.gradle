@@ -29,7 +29,7 @@ android {
 
     buildTypes.each {
         it.buildConfigField 'String', 'BASE_URL', '"https://newsapi.org/v1"'
-        it.resValue('string', 'newsapi_api_key', '04a72bcaa72f4bb9b51c87c7c7421e43')
+        it.resValue('string', 'newsapi_api_key', 'put_api_key_here')
     }
 }
 

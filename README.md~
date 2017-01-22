@@ -1,0 +1,3 @@
+# Nanodegree-Capstone
+
+This application makes use of newsapi.org APIs. API key (newsapi_key) used in app/build.gradle can be generated from https://newsapi.org/ 

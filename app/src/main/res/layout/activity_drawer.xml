@@ -28,6 +28,27 @@
             app:itemTextColor="@color/textColorPrimary"
             app:menu="@menu/nav_menu">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorPrimary" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="Powered by newsapi.org"
+                    android:textColor="@color/textColorSecondary"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
         </android.support.design.widget.NavigationView>
 
     </android.support.v4.widget.DrawerLayout>
