@@ -1,8 +1,6 @@
 package com.nanodegree.topnews.newslist;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nanodegree.topnews.R;
-import com.nanodegree.topnews.data.BookmarksHelper;
-import com.nanodegree.topnews.data.BookmarksProvider;
+import com.nanodegree.topnews.data.BookmarksManager;
 import com.nanodegree.topnews.databinding.ListItemArticleBinding;
 import com.nanodegree.topnews.model.Article;
 import com.squareup.picasso.Picasso;
@@ -23,9 +20,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context context;
     private List<Article> articleList;
     public int selectedIndex = 0;
-    private static final String[] PROJECTION = {BookmarksHelper.BOOKMARK_COLUMN_ID,
-            BookmarksHelper.BOOKMARK_COLUMN_TITLE, BookmarksHelper.BOOKMARK_COLUMN_PUBLISHED_AT,
-            BookmarksHelper.BOOKMARK_COLUMN_URL, BookmarksHelper.BOOKMARK_COLUMN_IMAGE_URL};
 
     interface NewsItemSelectionListener {
         void onArticleSelected(int position);
@@ -50,7 +44,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         final Article article = articleList.get(position);
 
-        if (isBookmarked(article)) {
+        if (BookmarksManager.isBookmarked(context, article)) {
             viewHolder.binding.ivArticleBookmark.setSelected(true);
         } else {
             viewHolder.binding.ivArticleBookmark.setSelected(false);
@@ -93,10 +87,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     if (binding.ivArticleBookmark.isSelected()) {
                         binding.ivArticleBookmark.setSelected(false);
                         //notifyItemRemoved(getLayoutPosition());
-                        deleteBookmark(article);
+                        BookmarksManager.deleteBookmark(context, article);
                     } else {
                         binding.ivArticleBookmark.setSelected(true);
-                        addBookmark(article);
+                        BookmarksManager.addBookmark(context, article);
                     }
                     break;
 
@@ -113,29 +107,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public List<Article> getArticleList() {
         return articleList;
-    }
-
-    private void addBookmark(Article article) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(BookmarksHelper.BOOKMARK_COLUMN_TITLE, article.getTitle());
-        contentValues.put(BookmarksHelper.BOOKMARK_COLUMN_URL, article.getUrl());
-        contentValues.put(BookmarksHelper.BOOKMARK_COLUMN_IMAGE_URL, article.getUrlToImage());
-        contentValues.put(BookmarksHelper.BOOKMARK_COLUMN_PUBLISHED_AT, article.getPublishedAt());
-        context.getContentResolver().insert(BookmarksProvider.CONTENT_URI, contentValues);
-    }
-
-    private void deleteBookmark(Article article) {
-        context.getContentResolver().delete(BookmarksProvider.CONTENT_URI,
-                BookmarksHelper.BOOKMARK_COLUMN_URL + "=?",
-                new String[]{article.getUrl()});
-    }
-
-    private boolean isBookmarked(Article article) {
-        Cursor cursor = context.getContentResolver().query(BookmarksProvider.CONTENT_URI,
-                PROJECTION, BookmarksHelper.BOOKMARK_COLUMN_URL + "=?",
-                new String[]{article.getUrl()}, null);
-
-        return cursor.getCount() > 0;
     }
 
 }

@@ -7,5 +7,6 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="message_network_error">An unexpected error processing your request. Please try again.</string>
+    <string name="message_no_network">Please check your network connection and try again.</string>
     <string name="retry">RETRY</string>
 </resources>

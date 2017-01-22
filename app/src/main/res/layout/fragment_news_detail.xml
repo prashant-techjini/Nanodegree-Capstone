@@ -1,5 +1,15 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="clickHandler"
+            type="android.view.View.OnClickListener" />
+    </data>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,7 +27,7 @@
                 android:layout_height="240dp"
                 android:scaleType="centerCrop" />
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -35,19 +45,31 @@
                     android:textColor="@color/textColorPrimary"
                     android:textSize="20sp" />
 
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/iv_article_bookmark"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/tv_detail_title"
+                    android:onClick="@{clickHandler::onClick}"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    app:srcCompat="@drawable/selector_bookmark" />
+
                 <TextView
                     android:id="@+id/tv_detail_time"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_detail_title"
                     android:layout_marginBottom="4dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
+                    android:layout_toLeftOf="@id/iv_article_bookmark"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:textColor="@color/textColorSecondary"
                     android:textSize="12sp" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <WebView
                 android:id="@+id/web_detail_content"

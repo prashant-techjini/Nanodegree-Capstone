@@ -18,6 +18,7 @@ import com.nanodegree.topnews.databinding.FragmentNewsSourceBinding;
 import com.nanodegree.topnews.interactor.GetNewsSourceUseCase;
 import com.nanodegree.topnews.model.NewsSource;
 import com.nanodegree.topnews.model.NewsSourcesCollection;
+import com.nanodegree.topnews.util.Utils;
 
 import java.util.List;
 
@@ -97,12 +98,24 @@ public class NewsSourceFragment extends Fragment {
         binding.recyclerSourceList.setAdapter(adapter);
 
         getNewsSourceUseCase = new GetNewsSourceUseCase(context);
-        doApiCallGetNewsList();
+        doApiCallGetNewsSourceList();
 
         return binding.getRoot();
     }
 
-    private void doApiCallGetNewsList() {
+    private void doApiCallGetNewsSourceList() {
+        if (!Utils.isInternetConnected(context)) {
+            Snackbar snackbar =
+                    Snackbar.make(binding.flNewsSource, R.string.message_no_network, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.retry, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doApiCallGetNewsSourceList();
+                }
+            });
+            snackbar.show();
+            return;
+        }
         progressDialog.show();
         progressDialog.setCancelable(false);
         getNewsSourceUseCase.getSources(new GetNewsSourceSubscriber());
@@ -172,7 +185,7 @@ public class NewsSourceFragment extends Fragment {
             snackbar.setAction(R.string.retry, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    doApiCallGetNewsList();
+                    doApiCallGetNewsSourceList();
                 }
             });
             snackbar.show();

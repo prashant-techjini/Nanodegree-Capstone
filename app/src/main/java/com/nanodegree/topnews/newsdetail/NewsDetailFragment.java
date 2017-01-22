@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,10 @@ import android.webkit.WebViewClient;
 import com.google.gson.Gson;
 import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
+import com.nanodegree.topnews.data.BookmarksManager;
 import com.nanodegree.topnews.databinding.FragmentNewsDetailBinding;
 import com.nanodegree.topnews.model.Article;
-import com.nanodegree.topnews.util.TimeUtils;
+import com.nanodegree.topnews.util.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -31,7 +33,7 @@ import com.squareup.picasso.Target;
  * Use the {@link NewsDetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewsDetailFragment extends Fragment {
+public class NewsDetailFragment extends Fragment implements View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -46,8 +48,9 @@ public class NewsDetailFragment extends Fragment {
     private FragmentNewsDetailBinding binding;
     private ProgressDialog progressDialog;
     private ImageLoadingCallback imageLoadingCallback;
+    private Article article;
 
-    interface ImageLoadingCallback {
+    public interface ImageLoadingCallback {
         void onImageLoaded(Bitmap bitmap);
     }
 
@@ -88,16 +91,20 @@ public class NewsDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_news_detail, container, false);
+        binding.setClickHandler(this);
 
         String jsonString = getActivity().getIntent().getStringExtra(Constants.NEWS_DETAIL);
         Gson gson = new Gson();
-        Article article = gson.fromJson(jsonString, Article.class);
+        article = gson.fromJson(jsonString, Article.class);
 
-        binding.tvDetailTitle.setText(article.getTitle());
-        binding.tvDetailTime.setText(TimeUtils.getDisplayTextTime(article.getPublishedAt()));
         binding.webDetailContent.setWebViewClient(new NewsDetailWebViewClient());
         binding.webDetailContent.getSettings().setJavaScriptEnabled(true);
-        binding.webDetailContent.loadUrl(article.getUrl());
+        if (article != null) {
+            binding.ivArticleBookmark.setSelected(BookmarksManager.isBookmarked(context, article));
+            binding.tvDetailTitle.setText(article.getTitle());
+            binding.tvDetailTime.setText(Utils.getDisplayTextTime(article.getPublishedAt()));
+            binding.webDetailContent.loadUrl(article.getUrl());
+        }
 
         Target target = new Target() {
             @Override
@@ -117,12 +124,18 @@ public class NewsDetailFragment extends Fragment {
             }
         };
 
-        if (article != null && article.getUrlToImage() != null) {
+        if (article != null && article.getUrlToImage() != null)
+
+        {
             Picasso.with(context).load(article.getUrlToImage()).into(target);
-        } else {
-            binding.ivDetailImage.setImageResource(R.mipmap.ic_launcher);
         }
+
         return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -149,6 +162,25 @@ public class NewsDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.iv_article_bookmark:
+                if (binding.ivArticleBookmark.isSelected()) {
+                    binding.ivArticleBookmark.setSelected(false);
+                    BookmarksManager.deleteBookmark(context, article);
+                } else {
+                    binding.ivArticleBookmark.setSelected(true);
+                    BookmarksManager.addBookmark(context, article);
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     /**

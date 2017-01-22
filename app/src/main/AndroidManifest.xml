@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".newslist.NewsListActivity"
+            android:name=".SplashScreenActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,6 +20,9 @@
         <activity android:name=".newsdetail.NewsDetailActivity" />
         <activity android:name=".drawermenu.DrawerActivity" />
         <activity android:name=".newssource.NewsSourceActivity" />
+        <activity
+            android:name=".newslist.NewsListActivity"
+            android:launchMode="singleTask" />
         <activity
             android:name=".newslist.BookmarksListActivity"
             android:launchMode="singleTask" />
@@ -46,7 +49,8 @@
         <service
             android:name=".widget.WidgetUpdateService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
     </application>
 
 </manifest>

@@ -13,8 +13,6 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
@@ -32,7 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookmarksListActivity extends DrawerActivity implements
-        NewsListAdapter.NewsItemSelectionListener, LoaderManager.LoaderCallbacks<Cursor> {
+        NewsListAdapter.NewsItemSelectionListener, LoaderManager.LoaderCallbacks<Cursor>,
+        NewsListFragment.OnFragmentInteractionListener {
 
     private static final String[] PROJECTION = {BookmarksHelper.BOOKMARK_COLUMN_ID,
             BookmarksHelper.BOOKMARK_COLUMN_TITLE, BookmarksHelper.BOOKMARK_COLUMN_PUBLISHED_AT,
@@ -164,5 +163,10 @@ public class BookmarksListActivity extends DrawerActivity implements
             intent.putExtra(Constants.NEWS_DETAIL, jsonString);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onListLoaded(List<Article> articles) {
+
     }
 }

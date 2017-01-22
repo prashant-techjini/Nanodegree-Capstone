@@ -11,11 +11,11 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
-import com.nanodegree.topnews.data.Preferences;
 import com.nanodegree.topnews.databinding.ActivitySettingsBinding;
 import com.nanodegree.topnews.drawermenu.DrawerActivity;
 import com.nanodegree.topnews.model.NewsSource;
 import com.nanodegree.topnews.newssource.NewsSourceActivity;
+import com.nanodegree.topnews.util.Utils;
 
 public class SettingsActivity extends DrawerActivity implements View.OnClickListener {
     ActivitySettingsBinding binding;
@@ -40,7 +40,7 @@ public class SettingsActivity extends DrawerActivity implements View.OnClickList
             }
         }
 
-        binding.tvSourceName.setText(Preferences.getString(this, Constants.NEWS_SOURCE_NAME));
+        binding.tvSourceName.setText(Utils.getCurrentNewsSource(this).getName());
     }
 
     @Override

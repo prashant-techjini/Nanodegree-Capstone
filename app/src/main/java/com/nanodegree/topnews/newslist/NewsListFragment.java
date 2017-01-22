@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,13 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
-import com.nanodegree.topnews.data.Preferences;
 import com.nanodegree.topnews.databinding.FragmentNewsListBinding;
 import com.nanodegree.topnews.interactor.GetNewsListUseCase;
 import com.nanodegree.topnews.model.Article;
 import com.nanodegree.topnews.model.ArticlesCollection;
+import com.nanodegree.topnews.util.Utils;
 
 import java.util.List;
 
@@ -103,7 +101,7 @@ public class NewsListFragment extends Fragment {
         binding.recyclerNewsList.setAdapter(adapter);
 
         if (activity instanceof NewsListActivity) {
-            newsSourceId = Preferences.getString(context, Constants.NEWS_SOURCE_ID);
+            newsSourceId = Utils.getCurrentNewsSource(context).getId();
             getNewsListUseCase = new GetNewsListUseCase(context);
             doApiCallGetNewsList(newsSourceId);
         } else {
@@ -124,14 +122,26 @@ public class NewsListFragment extends Fragment {
     }
 
     public void refreshNewsList() {
-        newsSourceId = Preferences.getString(context, Constants.NEWS_SOURCE_ID);
+        newsSourceId = Utils.getCurrentNewsSource(context).getId();
         doApiCallGetNewsList(newsSourceId);
     }
 
-    private void doApiCallGetNewsList(String newsSourceId) {
+    private void doApiCallGetNewsList(String sourceId) {
+        if (!Utils.isInternetConnected(context)) {
+            Snackbar snackbar =
+                    Snackbar.make(binding.flNewsList, R.string.message_no_network, Snackbar.LENGTH_INDEFINITE);
+            snackbar.setAction(R.string.retry, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    doApiCallGetNewsList(newsSourceId);
+                }
+            });
+            snackbar.show();
+            return;
+        }
         progressDialog.show();
         progressDialog.setCancelable(false);
-        getNewsListUseCase.getNewsList(new GetNewsListSubscriber(), newsSourceId);
+        getNewsListUseCase.getNewsList(new GetNewsListSubscriber(), sourceId);
     }
 
     public void updateNewsSource(String newsSourceId) {
@@ -139,24 +149,17 @@ public class NewsListFragment extends Fragment {
         doApiCallGetNewsList(newsSourceId);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
         this.activity = (Activity) context;
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -171,21 +174,6 @@ public class NewsListFragment extends Fragment {
 
     public RecyclerView getRecyclerView() {
         return binding.recyclerNewsList;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public class GetNewsListSubscriber extends Subscriber<ArticlesCollection> {
@@ -214,6 +202,21 @@ public class NewsListFragment extends Fragment {
         public void onNext(ArticlesCollection articlesCollection) {
             progressDialog.dismiss();
             adapter.setData(articlesCollection.getArticles());
+            mListener.onListLoaded(articlesCollection.getArticles());
         }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        void onListLoaded(List<Article> articles);
     }
 }

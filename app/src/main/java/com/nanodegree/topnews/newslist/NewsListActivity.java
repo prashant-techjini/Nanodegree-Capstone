@@ -2,6 +2,7 @@ package com.nanodegree.topnews.newslist;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -13,42 +14,39 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.gson.Gson;
 import com.nanodegree.topnews.Constants;
 import com.nanodegree.topnews.R;
 import com.nanodegree.topnews.data.Preferences;
 import com.nanodegree.topnews.databinding.ActivityNewsListBinding;
 import com.nanodegree.topnews.drawermenu.DrawerActivity;
+import com.nanodegree.topnews.model.Article;
 import com.nanodegree.topnews.model.NewsSource;
 import com.nanodegree.topnews.newsdetail.NewsDetailActivity;
 import com.nanodegree.topnews.newsdetail.NewsDetailFragment;
 import com.nanodegree.topnews.newssource.NewsSourceActivity;
+import com.nanodegree.topnews.util.Utils;
 import com.nanodegree.topnews.widget.TopNewsWidget;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 public class NewsListActivity extends DrawerActivity implements View.OnClickListener,
-        NewsListAdapter.NewsItemSelectionListener {
+        NewsListAdapter.NewsItemSelectionListener, NewsDetailFragment.ImageLoadingCallback,
+        NewsListFragment.OnFragmentInteractionListener {
 
     private ActivityNewsListBinding binding;
     private NewsListFragment newsListFragment;
     private boolean isTablet = false;
     private FirebaseRemoteConfig remoteConfig;
     private NewsSource newsSource;
-//    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.inflate(getLayoutInflater(), R.layout.activity_news_list,
                 drawerBinding.flContentMain, true);
-        initRemoteConfig();
-
-        // Obtain the FirebaseAnalytics instance.
-//        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         binding.toolbar.setClickHandler(this);
 
@@ -81,18 +79,12 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
     }
 
     private void updateNewsSourceDisplay() {
-        String newsSourceId = Preferences.getString(this, Constants.NEWS_SOURCE_ID);
-        String newsSourceName = Preferences.getString(this, Constants.NEWS_SOURCE_NAME);
-        String newsSourceLogoUrl = Preferences.getString(this, Constants.NEWS_SOURCE_LOGO_URL);
+        NewsSource newsSource = Utils.getCurrentNewsSource(this);
 
-        if ("".equals(newsSourceName)) {
-            newsSourceName = FirebaseRemoteConfig.getInstance().getString("default_source_name");
-            newsSourceLogoUrl = FirebaseRemoteConfig.getInstance().getString("default_source_logo_url");
-        }
-
-        binding.toolbar.tvSourceName.setText(newsSourceName);
-        if (!TextUtils.isEmpty(newsSourceLogoUrl)) {
-            Picasso.with(this).load(newsSourceLogoUrl).into(binding.toolbar.ivSourceLogo);
+        binding.toolbar.tvSourceName.setText(newsSource.getName());
+        if (!TextUtils.isEmpty(newsSource.getUrlsToLogos().getSmall())) {
+            Picasso.with(this).load(newsSource.getUrlsToLogos().getSmall()).
+                    into(binding.toolbar.ivSourceLogo);
         }
     }
 
@@ -145,39 +137,6 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
         }
     }
 
-    private void initRemoteConfig() {
-        remoteConfig = FirebaseRemoteConfig.getInstance();
-
-        remoteConfig.setDefaults(R.xml.remote_config_defaults);
-        FirebaseRemoteConfigSettings remoteConfigSettings = new FirebaseRemoteConfigSettings.Builder()
-                .setDeveloperModeEnabled(true)
-                .build();
-        remoteConfig.setConfigSettings(remoteConfigSettings);
-        fetchRemoteConfigValues();
-    }
-
-    private void fetchRemoteConfigValues() {
-        long cacheExpiration = 3600;
-
-        //expire the cache immediately for development mode.
-        if (remoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = 0;
-        }
-
-        remoteConfig.fetch(cacheExpiration)
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            // task successful. Activate the fetched data
-                            remoteConfig.activateFetched();
-                        } else {
-                            //task failed
-                        }
-                    }
-                });
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -216,4 +175,15 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
         sendBroadcast(intent);
     }
 
+    @Override
+    public void onImageLoaded(Bitmap bitmap) {
+
+    }
+
+    @Override
+    public void onListLoaded(List<Article> articles) {
+        if (articles.size() > 0 && isTablet) {
+            onArticleSelected(0);
+        }
+    }
 }

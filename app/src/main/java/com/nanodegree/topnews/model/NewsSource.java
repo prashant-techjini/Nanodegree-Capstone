@@ -7,7 +7,7 @@ package com.nanodegree.topnews.model;
 public class NewsSource {
     private String id = null;
     private String name = null;
-    private UrlsToLogos urlsToLogos = null;
+    private UrlsToLogos urlsToLogos = new UrlsToLogos();
 
     public static class UrlsToLogos {
         private String small = null;
