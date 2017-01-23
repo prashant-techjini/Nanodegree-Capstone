@@ -60,8 +60,6 @@ public class BookmarksListActivity extends DrawerActivity implements
             }
         }
 
-        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
-
         newsListFragment = (NewsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_news_list);
         FrameLayout layoutNewsDetail = (FrameLayout) findViewById(R.id.fl_container_news_detail);
         if (layoutNewsDetail != null) {
@@ -75,22 +73,11 @@ public class BookmarksListActivity extends DrawerActivity implements
         }
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-//                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
-//                } else {
-//                    drawerBinding.drawerLayout.openDrawer(Gravity.LEFT);
-//                }
-//                break;
-//
-//            default:
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

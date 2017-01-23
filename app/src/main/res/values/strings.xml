@@ -9,4 +9,14 @@
     <string name="message_network_error">An unexpected error processing your request. Please try again.</string>
     <string name="message_no_network">Please check your network connection and try again.</string>
     <string name="retry">RETRY</string>
+    <string name="no_data_to_display">No data to display</string>
+    <string name="current_source_logo">Current source logo</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="source">Source</string>
+    <string name="powered_by_newsapi_org">Powered by newsapi.org</string>
+    <string name="news_detail_image">News detail image</string>
+    <string name="news_detail_bookmark_option">News detail bookmark option</string>
+    <string name="news_item_image">News item image</string>
+    <string name="news_item_bookmark_option">News item bookmark option</string>
+    <string name="source_logo">Source list item logo</string>
 </resources>

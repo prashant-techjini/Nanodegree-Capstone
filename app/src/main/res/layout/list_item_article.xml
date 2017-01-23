@@ -28,7 +28,9 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_weight="0"
+                android:contentDescription="@string/news_item_image"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -37,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_weight="1"
                 android:ellipsize="end"
@@ -49,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
+                android:contentDescription="@string/news_item_bookmark_option"
                 android:onClick="@{clickHandler::onClick}"
                 android:padding="16dp"
                 app:srcCompat="@drawable/selector_bookmark" />
@@ -60,6 +64,7 @@
             android:layout_height="1dp"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="72dp"
+            android:layout_marginStart="72dp"
             android:background="@color/colorPrimary" />
 
     </RelativeLayout>

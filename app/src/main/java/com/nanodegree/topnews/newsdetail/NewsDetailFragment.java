@@ -1,5 +1,6 @@
 package com.nanodegree.topnews.newsdetail;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -45,6 +46,7 @@ public class NewsDetailFragment extends Fragment implements View.OnClickListener
 
     private OnFragmentInteractionListener mListener;
     private Context context;
+    private Activity activity;
     private FragmentNewsDetailBinding binding;
     private ProgressDialog progressDialog;
     private ImageLoadingCallback imageLoadingCallback;
@@ -100,7 +102,7 @@ public class NewsDetailFragment extends Fragment implements View.OnClickListener
         binding.webDetailContent.setWebViewClient(new NewsDetailWebViewClient());
         binding.webDetailContent.getSettings().setJavaScriptEnabled(true);
         if (article != null) {
-            binding.ivArticleBookmark.setSelected(BookmarksManager.isBookmarked(context, article));
+            binding.ivDetailBookmark.setSelected(BookmarksManager.isBookmarked(context, article));
             binding.tvDetailTitle.setText(article.getTitle());
             binding.tvDetailTime.setText(Utils.getDisplayTextTime(article.getPublishedAt()));
             binding.webDetailContent.loadUrl(article.getUrl());
@@ -149,13 +151,8 @@ public class NewsDetailFragment extends Fragment implements View.OnClickListener
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        this.activity = (Activity) context;
         imageLoadingCallback = (ImageLoadingCallback) context;
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
     }
 
     @Override
@@ -168,12 +165,12 @@ public class NewsDetailFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
 
-            case R.id.iv_article_bookmark:
-                if (binding.ivArticleBookmark.isSelected()) {
-                    binding.ivArticleBookmark.setSelected(false);
+            case R.id.iv_detail_bookmark:
+                if (binding.ivDetailBookmark.isSelected()) {
+                    binding.ivDetailBookmark.setSelected(false);
                     BookmarksManager.deleteBookmark(context, article);
                 } else {
-                    binding.ivArticleBookmark.setSelected(true);
+                    binding.ivDetailBookmark.setSelected(true);
                     BookmarksManager.addBookmark(context, article);
                 }
                 break;
@@ -201,12 +198,18 @@ public class NewsDetailFragment extends Fragment implements View.OnClickListener
     private class NewsDetailWebViewClient extends WebViewClient {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (activity == null || activity.isDestroyed()) {
+                return;
+            }
             progressDialog.show();
             super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            if (activity == null || activity.isDestroyed()) {
+                return;
+            }
             progressDialog.dismiss();
             super.onPageFinished(view, url);
         }

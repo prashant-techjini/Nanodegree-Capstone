@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.view.Gravity;
+import android.support.v4.view.GravityCompat;
 import android.view.MenuItem;
 
 import com.nanodegree.topnews.BaseActivity;
@@ -25,8 +25,8 @@ public class DrawerActivity extends BaseActivity {
         drawerBinding.navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
+                if (drawerBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerBinding.drawerLayout.closeDrawer(GravityCompat.START);
                 }
                 Intent intent;
 
@@ -71,8 +71,8 @@ public class DrawerActivity extends BaseActivity {
             drawerBinding.navView.getMenu().getItem(2).setChecked(true);
         }
 
-        if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-            drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
+        if (drawerBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerBinding.drawerLayout.closeDrawer(GravityCompat.START);
         }
     }
 
@@ -80,10 +80,10 @@ public class DrawerActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (drawerBinding.drawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    drawerBinding.drawerLayout.closeDrawer(Gravity.LEFT);
+                if (drawerBinding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerBinding.drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    drawerBinding.drawerLayout.openDrawer(Gravity.LEFT);
+                    drawerBinding.drawerLayout.openDrawer(GravityCompat.START);
                 }
                 break;
 

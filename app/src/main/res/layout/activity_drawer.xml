@@ -22,7 +22,7 @@
             android:id="@+id/nav_view"
             android:layout_width="304dp"
             android:layout_height="match_parent"
-            android:layout_gravity="left"
+            android:layout_gravity="start"
             android:background="@color/white"
             app:headerLayout="@layout/nav_header"
             app:itemTextColor="@color/textColorPrimary"
@@ -43,7 +43,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Powered by newsapi.org"
+                    android:text="@string/powered_by_newsapi_org"
                     android:textColor="@color/textColorSecondary"
                     android:textSize="12sp" />
 

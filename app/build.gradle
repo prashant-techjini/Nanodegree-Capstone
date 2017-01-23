@@ -17,6 +17,16 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
+    signingConfigs {
+        release {
+            storeFile file("../buildsystem/topnews.jks")
+            storePassword "nanodegree"
+            keyAlias "topnews_releasekey"
+            keyPassword "udacity"
+        }
+    }
+
     dataBinding {
         enabled = true
     }

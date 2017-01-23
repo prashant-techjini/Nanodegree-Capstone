@@ -81,7 +81,6 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
     private void updateNewsSourceDisplay() {
         NewsSource newsSource = Utils.getCurrentNewsSource(this);
 
-        binding.toolbar.tvSourceName.setText(newsSource.getName());
         if (!TextUtils.isEmpty(newsSource.getUrlsToLogos().getSmall())) {
             Picasso.with(this).load(newsSource.getUrlsToLogos().getSmall()).
                     into(binding.toolbar.ivSourceLogo);
@@ -158,7 +157,6 @@ public class NewsListActivity extends DrawerActivity implements View.OnClickList
         Gson gson = new Gson();
         newsSource = gson.fromJson(jsonString, NewsSource.class);
 
-        binding.toolbar.tvSourceName.setText(newsSource.getName());
         if (!TextUtils.isEmpty(newsSource.getUrlsToLogos().getSmall())) {
             Picasso.with(this).load(newsSource.getUrlsToLogos().getSmall())
                     .into(binding.toolbar.ivSourceLogo);
